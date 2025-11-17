@@ -8,13 +8,11 @@ import (
 	"github.com/gofiber/fiber/v2"
 )
 
-
-
 func main() {
 	base.LoadEnvVariables()
 	base.ConnectionDB()
-	app:= fiber.New()
+	app := fiber.New()
 	rout.RoutGroup(app)
-	port :=os.Getenv("PORT")
-	app.Listen(":"+port)
+	port := os.Getenv("PORT")
+	app.Listen(":" + port)
 }

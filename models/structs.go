@@ -15,13 +15,11 @@ type InputUser struct {
 	Age   int    `json:"age" validate:"required,gte=0"`
 }
 
-
 type UpdateUser struct {
 	Name  *string `json:"name"`
 	Email *string `json:"email"`
 	Age   *int    `json:"age"`
 }
-
 
 type PutUpdateUser struct {
 	Name  string `json:"name" validate:"required"`

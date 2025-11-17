@@ -3,6 +3,7 @@ package controllers
 import (
 	"wiwieie011/base"
 	"wiwieie011/models"
+
 	"github.com/go-playground/validator/v10"
 	"github.com/gofiber/fiber/v2"
 )
@@ -10,40 +11,40 @@ import (
 var validate = validator.New()
 
 func GetUsers(c *fiber.Ctx) error {
-	var s []models.User
-	if err := base.DB.Find(&s).Error; err != nil {
+	var userList []models.User
+	if err := base.DB.Find(&userList).Error; err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
 	}
 
-	return c.JSON(s)
+	return c.JSON(userList)
 }
 
 func GetUserByID(c *fiber.Ctx) error {
-	var s models.User
-	if err := base.DB.Where("id = ?", c.Params("id")).First(&s).Error; err != nil {
+	var userID models.User
+	if err := base.DB.Where("id = ?", c.Params("id")).First(&userID).Error; err != nil {
 		return c.Status(fiber.StatusNotFound).JSON(fiber.Map{"error": err.Error()})
 
 	}
 
-	return c.JSON(s)
+	return c.JSON(userID)
 }
 
 func CreateUser(c *fiber.Ctx) error {
-	var s = new(models.InputUser)
+	var userInput = new(models.InputUser)
 
-	if err := c.BodyParser(s); err != nil {
+	if err := c.BodyParser(userInput); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err})
 
 	}
 
-	 if err := validate.Struct(s); err != nil {
-        return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-    }
+	if err := validate.Struct(userInput); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
 
-	a := models.User{Name: s.Name, Email: s.Email, Age: s.Age}
+	mainUser := models.User{Name: userInput.Name, Email: userInput.Email, Age: userInput.Age}
 
-	base.DB.Create(&a)
-	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"created": true, "user": a})
+	base.DB.Create(&mainUser)
+	return c.Status(fiber.StatusCreated).JSON(fiber.Map{"created": true, "user": mainUser})
 
 }
 
@@ -71,17 +72,15 @@ func PutUser(c *fiber.Ctx) error {
 
 	var data models.PutUpdateUser
 
-	
-
 	if err := c.BodyParser(&data); err != nil {
 		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
 			"error": "invalid json",
 		})
 	}
 
-	 if err := validate.Struct(data); err != nil {
-        return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
-    }
+	if err := validate.Struct(data); err != nil {
+		return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{"error": err.Error()})
+	}
 
 	err := base.DB.Model(&models.User{}).Where("id = ?", id).Updates(data).Error
 	if err != nil {
@@ -92,8 +91,8 @@ func PutUser(c *fiber.Ctx) error {
 }
 
 func DeleteUserByID(c *fiber.Ctx) error {
-	var s models.User
-	err := base.DB.Where("id = ?", c.Params("id")).Unscoped().Delete(&s).Error
+	var userDelete models.User
+	err := base.DB.Where("id = ?", c.Params("id")).Unscoped().Delete(&userDelete).Error
 
 	if err != nil {
 		return c.Status(fiber.StatusInternalServerError).JSON(fiber.Map{"error": err.Error()})
