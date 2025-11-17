@@ -1,6 +1,7 @@
 package base
 
 import (
+	"os"
 	"wiwieie011/models"
 
 	"gorm.io/driver/postgres"
@@ -11,7 +12,7 @@ import (
 var DB *gorm.DB
 
 func ConnectionDB(){
-	dsn := "host=localhost user=postgres password=tekhiev dbname=fiber port=5432 sslmode=disable"
+	dsn := os.Getenv("DB")
 	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
 
 	if err !=nil{

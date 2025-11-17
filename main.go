@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"wiwieie011/base"
 	"wiwieie011/rout"
 
@@ -10,8 +11,10 @@ import (
 
 
 func main() {
+	base.LoadEnvVariables()
 	base.ConnectionDB()
 	app:= fiber.New()
 	rout.RoutGroup(app)
-	app.Listen(":3000")
+	port :=os.Getenv("PORT")
+	app.Listen(":"+port)
 }
